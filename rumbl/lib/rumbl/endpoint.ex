@@ -24,7 +24,7 @@ defmodule Rumbl.Endpoint do
 
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
-    pass: ["*/*"],
+      pass: ["*/*"],
     json_decoder: Poison
 
   plug Plug.MethodOverride
