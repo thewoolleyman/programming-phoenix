@@ -28,6 +28,10 @@ defmodule Rumbl.Auth do
     |> configure_session(renew: true)
   end
 
+  def logout(conn) do
+    configure_session(conn, drop: true)
+  end
+
   def call(conn, repo) do
     user_id = get_session(conn, :user_id)
     user = user_id && repo.get(Rumbl.User, user_id)
