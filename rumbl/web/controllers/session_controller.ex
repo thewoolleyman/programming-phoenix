@@ -1,5 +1,5 @@
-defmodule SessionController do
-  use Rumbl.Web
+defmodule Rumbl.SessionController do
+  use Rumbl.Web, :controller
 
   def new(conn, _) do
     render conn, "new.html"
@@ -10,6 +10,7 @@ defmodule SessionController do
       {:ok, conn} ->
         conn
         |> put_flash(:info, "Welcome back!")
+        |> redirect(to: page_path(conn, :index))
       {:error, _reason, conn} ->
         conn
         |> put_flash(:error, "Invalid username/password combination")
