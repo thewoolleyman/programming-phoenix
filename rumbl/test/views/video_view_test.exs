@@ -1,4 +1,4 @@
-defmodule VideoViewTest do
+defmodule Rumbl.VideoViewTest do
   use Rumbl.ConnCase, async: true
   import Phoenix.View
 
