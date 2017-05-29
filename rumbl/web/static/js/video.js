@@ -28,16 +28,10 @@ const Video = {
     });
 
     vidChannel.join()
-      .receive("ok", ({annotations}) => {
-        annotations.forEach(ann => this.renderAnnotation(msgContainer, ann))
+      .receive("ok", resp => {
+        this.scheduleMessages(msgContainer, resp.annotations)
       })
       .receive("error", reason => console.log("join failed", reason));
-  },
-
-  esc(str) {
-    const div = document.createElement("div");
-    div.appendChild(document.createTextNode(str));
-    return div.innerHTML;
   },
 
   renderAnnotation(msgContainer, {user, body, at}) {
@@ -45,12 +39,44 @@ const Video = {
 
     template.innerHTML = `
     <a href="#" data-seek="${this.esc(at)}">
+      [${this.formatTime(at)}]
       <strong>${this.esc(user.username)}</strong>: ${this.esc(body)}
     </a>
-    `
+    `;
 
     msgContainer.appendChild(template);
     msgContainer.scrollTop = msgContainer.scrollHeight;
+  },
+
+  scheduleMessages(msgContainer, annotations) {
+    setTimeout(() => {
+      const ctime = Player.getCurrentTime();
+      const remaining = this.renderAtTime(annotations, ctime, msgContainer);
+      this.scheduleMessages(msgContainer, remaining);
+    }, 1000);
+  },
+
+  renderAtTime(annotations, seconds, msgContainer) {
+    return annotations.filter(ann => {
+      if (ann.at > seconds) {
+        return true;
+      } else {
+        this.renderAnnotation(msgContainer, ann);
+        return false;
+      }
+    })
+  },
+
+  formatTime(at) {
+    const date = new Date(null);
+    date.setSeconds(at / 1000);
+    return date.toISOString().substr(14, 5);
+  },
+
+  esc(str) {
+    const div = document.createElement("div");
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
   },
 };
 
